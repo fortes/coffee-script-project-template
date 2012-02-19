@@ -1,0 +1,12 @@
+{
+  "name": "myproject",
+  "description": "Project template for CoffeeScript projects",
+  "author": "Filipe Fortes <filipe@fortes.com>",
+  "version": "0.0.1",
+  "dependencies": {},
+  "devDependencies": {
+    "coffee-script": "*",
+    "colors": "*",
+    "wrench": "*"
+  }
+}
