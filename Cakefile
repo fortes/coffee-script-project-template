@@ -30,7 +30,6 @@ package = JSON.parse fs.readFileSync path.join __dirname, 'package.json'
 
 closure_compiler_flags = [
   "--compilation_level=ADVANCED_OPTIMIZATIONS"
-  "--define='myproject.DEBUG=false'"
   "--language_in=ECMASCRIPT5_STRICT"
   "--output_wrapper='(function(){%output%}).call(window);'"
   "--jscomp_error=accessControls"
@@ -47,6 +46,9 @@ closure_compiler_flags = [
   "--jscomp_warning=unknownDefines"
   "--warning_level=VERBOSE"
   "--summary_detail_level=3"
+  # Add any custom variable definitions below, using same format
+  "--define='goog.DEBUG=false'"
+  "--define='myproject.DEBUG=false'"
 ].map (flag) -> "--compiler_flags=\"#{flag}\""
 
 task 'build', 'Compiles and minifies JavaScript file for production use', ->
