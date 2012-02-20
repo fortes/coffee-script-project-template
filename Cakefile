@@ -84,6 +84,7 @@ task 'build', 'Compiles and minifies JavaScript file for production use', ->
         process.exit 1
 
       console.log "Compiled and minified: " + output_path.green
+      invoke 'size'
 
 task 'watch', 'Automatically recompile CoffeeScript files to JavaScript', ->
   console.log "Watching coffee files for changes, press Control-C to quit".yellow
@@ -113,16 +114,24 @@ task 'clean', 'Remove temporary and generated files', ->
     stats = fs.lstatSync filepath
     if stats.isDirectory()
       wrench.rmdirSyncRecursive filepath
-      console.log "Removed directory: #{filepath}".magenta
-    else if filepath.substr(filepath.length - 3, 3) is '.js'
+      console.log "Removed #{filepath}".magenta
+    else if /\.js$/.test filepath
       fs.unlinkSync filepath
-      console.log "Removed file: #{filepath}".magenta
+      console.log "Removed #{filepath}".magenta
 
   # Remove build/ and .tmp/
   for dir in [paths.tmp_dir, paths.build_dir]
     continue if not path.existsSync dir
     wrench.rmdirSyncRecursive dir
-    console.log "Removed  #{dir}".magenta
+    console.log "Removed #{dir}".magenta
+
+task 'size', 'Report file size', ->
+  return if not path.existsSync paths.build_dir
+  for file in fs.readdirSync paths.build_dir
+    # Skip non-JS files
+    if /\.js$/.test file
+      stats = fs.statSync path.join paths.build_dir, file
+      console.log "#{file}: #{stats.size} bytes"
 
 # Helper for stripping trailing endline when outputting
 strip_endline = (str) ->
@@ -132,7 +141,7 @@ strip_endline = (str) ->
 # Helper for inserting error text into the main.js file
 insert_js_error = (js) ->
   main_js = fs.openSync((path.join paths.lib_dir, 'main.js'), 'w')
-  fs.writeSync main_js, """throw Error(unescape(#{escape js}))""" + "\n"
+  fs.writeSync main_js, """console.error(unescape("#{escape js}"))""" + "\n"
   fs.closeSync main_js
 
 # Helper for updating deps.js file after changes
