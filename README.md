@@ -34,6 +34,7 @@ Project template for client-side JavaScript projects written in CoffeeScript and
 
 * Headless testing via PhantomJS
 * Generate documentation
+* Check lint with [Coffee Lint](http://www.coffeelint.org/)
 
 ## Contributors
 
