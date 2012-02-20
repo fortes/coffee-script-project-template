@@ -1,6 +1,11 @@
 # CoffeeScript Project Template
 
-Project template for client-side JavaScript projects written in CoffeeScript and compiled with Google's [Closure Compiler](http://code.google.com/closure/compiler/).
+Project template for client-side JavaScript projects written in CoffeeScript and compiled with Google's [Closure Compiler](http://code.google.com/closure/compiler/). Features include:
+
+* Watch CoffeeScript files for changes and automatically compile to JavaScript
+* Generate `deps.js` file so Closure can manage script dependencies
+* Output CoffeeScript compilation errors to browser while developing
+* Compile scripts using Closure's Advanced Compilation mode
 
 ## Pre-requisites
 
