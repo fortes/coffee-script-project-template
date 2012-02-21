@@ -1,11 +1,21 @@
 <!doctype html>
 <html>
   <head>
+    <title>My Project Tests</title>
     <!-- Module loaders & bootstrap -->
     <script src="../lib/closure/library/base.js"></script>
     <!-- Load via goog.require to get scripts in correct dependency order-->
     <script>
-      goog.require("myproject");
+      try {
+        goog.require("myproject");
+      }
+      catch (ex) {
+        if (/^goog.require/.test(ex.message)) {
+          console.error('Run `cake watch` in order to generate dependencies');
+        }
+
+        throw ex;
+      }
     </script>
   </head>
 
