@@ -33,7 +33,7 @@ Project template for client-side JavaScript projects written in CoffeeScript and
 ## Future Ideas
 
 * Headless testing via PhantomJS
-* Generate documentation
+* Generate documentation (via [CODO](http://netzpirat.github.com/codo/) or similar)
 * Check lint with [Coffee Lint](http://www.coffeelint.org/)
 
 ## Contributors
