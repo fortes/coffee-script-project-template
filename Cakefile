@@ -23,10 +23,10 @@ paths.deps_js = path.join paths.closure_dir, 'library/deps.js'
 
 # Create directories if they do not already exist
 for dir in [paths.build_dir, paths.tmp_dir, paths.externs_dir]
-  fs.mkdirSync dir, 0755 if not path.existsSync dir
+  fs.mkdirSync dir, '0755' if not path.existsSync dir
 
 # Read in package.json
-package = JSON.parse fs.readFileSync path.join __dirname, 'package.json'
+package_info = JSON.parse fs.readFileSync path.join __dirname, 'package.json'
 
 closure_compiler_flags = [
   "--compilation_level=ADVANCED_OPTIMIZATIONS"
@@ -68,7 +68,7 @@ task 'build', 'Compiles and minifies JavaScript file for production use', ->
       (fs.readdirSync paths.externs_dir).forEach (f) ->
         closure_compiler_flags.push("--compiler_flags=\"--externs=#{path.join paths.externs_dir, f}\"")
 
-    output_path = path.join paths.build_dir, "#{package.name}-#{package.version}.js"
+    output_path = path.join paths.build_dir, "#{package_info.name}-#{package_info.version}.js"
     p = exec "#{paths.closure_builder}
             --root #{paths.lib_dir} --input #{path.join paths.lib_dir, 'main.js'}
             --output_mode=compiled
