@@ -48,7 +48,7 @@ closure_compiler_flags = [
   "--summary_detail_level=3"
   # Add any custom variable definitions below, using same format
   "--define='goog.DEBUG=false'"
-  "--define='myproject.DEBUG=false'"
+  "--define='#{package_info.name}.DEBUG=false'"
 ].map (flag) -> "--compiler_flags=\"#{flag}\""
 
 task 'build', 'Compiles and minifies JavaScript file for production use', ->
