@@ -75,10 +75,19 @@ task 'build', 'Compiles and minifies JavaScript file for production use', ->
             --compiler_jar=#{path.join paths.closureDir, 'compiler/compiler.jar'}
             #{closureCompilerFlags.join ' '} --output_file=#{outputPath}"
     p.stderr.on 'data', consoleLogStreamer true, (line) ->
+      str = line
       # Strip out command name from messages
       if line.substr(0, paths.closureBuilder.length) is paths.closureBuilder
-        return line.substr(paths.closureBuilder.length + 2)
-      return line
+        str = line.substr(paths.closureBuilder.length + 2)
+
+      if /ERROR/.test str
+        str = str.red
+      else if /WARNING/.test str
+        str = str.yellow
+      else
+        str = str.grey
+
+      str
 
     p.on 'exit', (code) ->
       if code
@@ -171,6 +180,6 @@ consoleLogStreamer = (useError, filter) ->
     if str.indexOf("\n") isnt -1
       if filter
         buffer = filter buffer
-      console[if useError then 'error' else 'log'] stripEndline buffer
+      process[if useError then 'stderr' else 'stdout'].write buffer
       # Clear buffer
       buffer = ''
