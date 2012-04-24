@@ -6,6 +6,8 @@ Project template for client-side JavaScript projects written in CoffeeScript and
 * Generate `deps.js` file so Closure can manage script dependencies
 * Output CoffeeScript compilation errors to browser while developing
 * Compile scripts using Closure's Advanced Compilation mode
+* Write tests using [QUnit](http://docs.jquery.com/QUnit)
+* Run local webserver for development
 
 ## Pre-requisites
 
@@ -27,6 +29,7 @@ Project template for client-side JavaScript projects written in CoffeeScript and
 
 * `cake build`: Compiles and minifies JavaScript file for production use
 * `cake watch`: Automatically recompile CoffeeScript files to JavaScript
+* `cake server`: Run local webserver for testing (requires Python)
 * `cake clean`: Remove temporary and generated files
 * `cake size`: Report file size information for any scripts within `build/`
 

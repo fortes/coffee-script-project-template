@@ -112,6 +112,12 @@ task 'watch', 'Automatically recompile CoffeeScript files to JavaScript', ->
       # Add warning into code since watch window is in bg
       insertJsError "CoffeeScript compilation error: #{data}"
 
+
+task 'server', 'Start a web server in the root directory', ->
+  console.log "Starting web server at http://localhost:8000"
+  proc = exec "python -m SimpleHTTPServer"
+  proc.stderr.on 'data', (data) -> process.stderr.write data.grey
+  proc.stdout.on 'data', (data) -> process.stdout.write data.grey
 task 'clean', 'Remove temporary and generated files', ->
   # Delete generated deps.js file
   if path.existsSync paths.depsJs
