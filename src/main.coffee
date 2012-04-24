@@ -25,6 +25,3 @@ goog.exportSymbol 'myproject.square', myproject.helpers.square
 
 # Unused or unreferenced functions are stripped when compiled. Since the
 # multiply function was not used, it will not appear in the minified code
-
-# Set the background to a light blue
-document.documentElement.style.background = "#cef"

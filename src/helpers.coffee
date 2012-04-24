@@ -15,7 +15,7 @@ myproject.helpers =
   @param {number} b
   @returns {number} The product of the numbers
   ###
-  multiply: (a, b) -> a - b
+  multiply: (a, b) -> a * b
 
   ###*
   Squares a number
