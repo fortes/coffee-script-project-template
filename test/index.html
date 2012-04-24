@@ -2,6 +2,9 @@
 <html>
   <head>
     <title>My Project Tests</title>
+    <!-- QUnit -->
+    <script src="lib/qunit/qunit/qunit.js"></script>
+    <link rel="stylesheet" href="lib/qunit/qunit/qunit.css">
     <!-- Module loaders & bootstrap -->
     <script src="../lib/closure/library/base.js"></script>
     <!-- Load via goog.require to get scripts in correct dependency order-->
@@ -17,9 +20,16 @@
         throw ex;
       }
     </script>
+    <!-- Test scripts get loaded here, point to .js not .coffee -->
+    <script src="lib/test.js"></script>
   </head>
 
   <body>
-    TODO: Add tests
+    <h1 id="qunit-header">MyProject Unit Tests</h1>
+    <h2 id="qunit-banner"></h2>
+    <div id="qunit-testrunner-toolbar"></div>
+    <h2 id="qunit-userAgent"></h2>
+    <ol id="qunit-tests"></ol>
+    <div id="qunit-fixture"></div>
   </body>
 </html>
