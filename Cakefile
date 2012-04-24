@@ -48,11 +48,13 @@ closureCompilerFlags = [
   "--summary_detail_level=3"
   # Add any custom variable definitions below, using same format
   "--define='goog.DEBUG=false'"
-  "--define='DEBUG=false'"
+  "--define='myproject.DEBUG=false'"
 ].map (flag) -> "--compiler_flags=\"#{flag}\""
 
 task 'build', 'Compiles and minifies JavaScript file for production use', ->
   console.log "Compiling CoffeeScript".yellow
+  # Compile test scripts for consistency
+  exec "coffee --compile --bare --output #{paths.testLibDir} #{paths.testDir}"
   exec "coffee --compile --bare --output #{paths.libDir} #{paths.srcDir}", (e, o, se) ->
     if e
       console.error "Error encountered while compiling CoffeeScript".red
@@ -74,7 +76,7 @@ task 'build', 'Compiles and minifies JavaScript file for production use', ->
             --output_mode=compiled
             --compiler_jar=#{path.join paths.closureDir, 'compiler/compiler.jar'}
             #{closureCompilerFlags.join ' '} --output_file=#{outputPath}"
-    p.stderr.on 'data', consoleLogStreamer true, (line) ->
+    p.stderr.on 'data', stdErrorStreamer (line) ->
       str = line
       # Strip out command name from messages
       if line.substr(0, paths.closureBuilder.length) is paths.closureBuilder
@@ -99,25 +101,32 @@ task 'build', 'Compiles and minifies JavaScript file for production use', ->
 
 task 'watch', 'Automatically recompile CoffeeScript files to JavaScript', ->
   console.log "Watching coffee files for changes, press Control-C to quit".yellow
-  p = exec "coffee --compile --bare --watch --output #{paths.libDir} #{paths.srcDir}"
-  p.stderr.on 'data', (data) -> console.error stripEndline(data).red
-  p.stdout.on 'data', (data) ->
+  srcWatcher  = exec "coffee --compile --bare --watch --output #{paths.libDir} #{paths.srcDir}"
+  srcWatcher.stderr.on 'data', (data) -> console.error stripEndline(data).red
+  srcWatcher.stdout.on 'data', (data) ->
     # Hacky way to find if something compiled successfully
     if /compiled src/.test data
-      console.log stripEndline(data).green
+      process.stdout.write data.green
       # Re-calculate deps.js
       updateDepsDebounced()
     else
-      console.error stripEndline(data).red
+      process.stderr.write data.red
       # Add warning into code since watch window is in bg
       insertJsError "CoffeeScript compilation error: #{data}"
 
+  testWatcher = exec "coffee --compile --bare --watch --output #{paths.testLibDir} #{paths.testDir}"
+  testWatcher.stderr.on 'data', stdErrorStreamer()
+  testWatcher.stdout.on 'data', (data) ->
+    if /compiled/.test data
+      process.stdout.write data.green
+    else
+      process.stderr.write data.red
 
 task 'server', 'Start a web server in the root directory', ->
   console.log "Starting web server at http://localhost:8000"
   proc = exec "python -m SimpleHTTPServer"
-  proc.stderr.on 'data', (data) -> process.stderr.write data.grey
-  proc.stdout.on 'data', (data) -> process.stdout.write data.grey
+  proc.stderr.on 'data', stdOutStreamer (data) -> data.grey
+  proc.stdout.on 'data', stdOutStreamer (data) -> data.grey
 task 'clean', 'Remove temporary and generated files', ->
   # Delete generated deps.js file
   if path.existsSync paths.depsJs
@@ -179,13 +188,12 @@ updateDepsDebounced = ->
   clearTimeout updateDepsTimeout if updateDepsTimeout
   updateDepsTimeout = setTimeout updateDeps, 50
 
-consoleLogStreamer = (useError, filter) ->
-  buffer = ''
-  return (str) ->
-    buffer += str
-    if str.indexOf("\n") isnt -1
-      if filter
-        buffer = filter buffer
-      process[if useError then 'stderr' else 'stdout'].write buffer
-      # Clear buffer
-      buffer = ''
+stdOutStreamer = (filter) ->
+  (str) ->
+    str = filter str if filter
+    process.stderr.write str
+
+stdErrorStreamer = (filter) ->
+  (str) ->
+    str = filter str if filter
+    process.stderr.write str.red
