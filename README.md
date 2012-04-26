@@ -23,9 +23,11 @@ Project template for client-side JavaScript projects written in CoffeeScript and
 2. Clone locally
 3. Edit `package.json`
 4. Run `npm install` to install local dependencies
-5. Run `cake watch` to automatically compile CoffeeScript to JavaScript
-6. Start coding
-7. Run `cake build` to compile and minify your code with Closure Compiler
+5.  Run `git submodule update --init` to load QUnit
+6. Run `cake watch` to automatically compile CoffeeScript to JavaScript
+7. Start coding
+8. Test using `cake test:phantom`
+9. Run `cake build` to compile and minify your code with Closure Compiler
 
 ## Commands
 
