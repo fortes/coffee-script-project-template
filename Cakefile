@@ -20,6 +20,7 @@ paths.externsDir = path.join paths.libDir, 'externs'
 paths.calcdeps = path.join paths.closureDir, 'library/bin/calcdeps.py'
 paths.closureBuilder = path.join paths.closureDir, 'library/bin/build/closurebuilder.py'
 paths.depsJs = path.join paths.closureDir, 'library/deps.js'
+paths.testLibDir = paths.testDir + '/lib'
 
 # Create directories if they do not already exist
 for dir in [paths.buildDir, paths.tmpDir, paths.externsDir]
@@ -127,6 +128,54 @@ task 'server', 'Start a web server in the root directory', ->
   proc = exec "python -m SimpleHTTPServer"
   proc.stderr.on 'data', stdOutStreamer (data) -> data.grey
   proc.stdout.on 'data', stdOutStreamer (data) -> data.grey
+
+task 'test:phantom', 'Run tests via phantomJS', ->
+  exec "which phantomjs", (e, o, se) ->
+    if e
+      console.error "Must install PhantomJS http://phantomjs.org/".red
+      process.exit -1
+
+  # Disable web security so we don't have to run a server on localhost for AJAX
+  # calls
+  console.log "Running unit tests via PhantomJS".yellow
+  p = exec "phantomjs #{paths.testLibDir}/phantom-driver.coffee --web-security=no"
+  p.stderr.on 'data', stdErrorStreamer (data) -> data.red
+  # The phantom driver outputs JSON
+  p.stdout.on 'data', (data) ->
+    unless /^PHANTOM/.test data
+      process.stdout.write data.grey
+      return
+
+    pass = "✔".green
+    fail = "✖".red
+
+    # Split lines
+    for line in (data.split '\n')
+      continue unless line
+      try
+        obj = JSON.parse(line.substr 9)
+        switch obj.name
+          when 'moduleDone'
+            if obj.result.failed
+              console.error "#{fail}  Module #{obj.result.name}: #{obj.result.passed} tests passed, " + "#{obj.result.failed} tests failed".red
+            else
+              console.log "#{pass}  Module #{obj.result.name}: #{obj.result.total} tests passed"
+
+          # Output statistics on completion
+          when 'done'
+            console.log "\nFinished in #{obj.result.runtime/1000}s".grey
+            if obj.result.failed
+              console.error "#{fail}  #{obj.result.passed} tests passed, #{obj.result.failed} tests failed (#{Math.round(obj.result.passed / obj.result.total * 100)}%)"
+              process.exit -1
+            else
+              console.log "#{pass}  #{obj.result.total} tests passed"
+      catch ex
+        console.error "JSON parsing fail: #{line}".red
+
+  p.on 'exit', (code) ->
+    process.exit code
+
+
 task 'clean', 'Remove temporary and generated files', ->
   # Delete generated deps.js file
   if path.existsSync paths.depsJs
@@ -144,6 +193,13 @@ task 'clean', 'Remove temporary and generated files', ->
     else if /\.js$/.test filepath
       fs.unlinkSync filepath
       console.log "Removed #{filepath}".magenta
+
+  # Remove generated test jS
+  for file in fs.readdirSync paths.testLibDir
+    continue unless /\.js$/.test file
+    filepath = path.join paths.testLibDir, file
+    fs.unlinkSync filepath
+    console.log "Removed #{filepath}".magenta
 
   # Remove build/ and .tmp/
   for dir in [paths.tmpDir, paths.buildDir]
