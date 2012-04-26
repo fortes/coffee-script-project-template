@@ -7,7 +7,8 @@ test 'add', ->
 
 test 'multiply', ->
   equal helpers.multiply(2, 4), 8, 'Multiplication'
-  ok false, 'Purposeful failure'
+  # Fail on purpose
+  equal helpers.multiply(2, 0), 2, 'Multiply by zero'
 
 test 'square', ->
   equal helpers.square(3), 9, 'Squaring'

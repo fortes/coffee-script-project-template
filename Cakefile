@@ -155,11 +155,18 @@ task 'test:phantom', 'Run tests via phantomJS', ->
       try
         obj = JSON.parse(line.substr 9)
         switch obj.name
+          when 'log'
+            continue if obj.result.result
+            if 'expected' of obj.result
+              console.error "#{fail}  Failure: #{obj.result.message}; Expected: #{obj.result.expected}, Actual: #{obj.result.actual}"
+            else
+              console.error "#{fail}  Failure: #{obj.result.message}"
+
           when 'moduleDone'
             if obj.result.failed
-              console.error "#{fail}  Module #{obj.result.name}: #{obj.result.passed} tests passed, " + "#{obj.result.failed} tests failed".red
+              console.error "#{fail}  #{obj.result.name} module: #{obj.result.passed} tests passed, " + "#{obj.result.failed} tests failed".red
             else
-              console.log "#{pass}  Module #{obj.result.name}: #{obj.result.total} tests passed"
+              console.log "#{pass}  #{obj.result.name} module: #{obj.result.total} tests passed"
 
           # Output statistics on completion
           when 'done'
