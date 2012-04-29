@@ -112,8 +112,10 @@ task 'watch', 'Automatically recompile CoffeeScript files to JavaScript', ->
       updateDepsDebounced()
     else
       process.stderr.write data.red
-      # Add warning into code since watch window is in bg
-      insertJsError "CoffeeScript compilation error: #{data}"
+      filenameMatch = data.match /^In src\/(.*)\.coffee/
+      if filenameMatch and filenameMatch[1]
+        # Add warning into code since watch window is in bg
+        insertJsError filenameMatch[1], "CoffeeScript compilation error: #{data}"
 
   testWatcher = exec "coffee --compile --bare --watch --output #{paths.testLibDir} #{paths.testDir}"
   testWatcher.stderr.on 'data', stdErrorStreamer()
@@ -227,11 +229,11 @@ stripEndline = (str) ->
   return str.slice(0, str.length - 1) if str[str.length - 1] is "\n"
   return str
 
-# Helper for inserting error text into the main.js file
-insertJsError = (js) ->
-  mainJs = fs.openSync((path.join paths.libDir, 'main.js'), 'w')
-  fs.writeSync mainJs, """console.error(unescape("#{escape js}"))""" + "\n"
-  fs.closeSync mainJs
+# Helper for inserting error text into a given file
+insertJsError = (filename, js) ->
+  jsFile = fs.openSync((path.join paths.libDir, "#{filename}.js"), 'w')
+  fs.writeSync jsFile, """console.error(unescape("#{escape js}"))""" + "\n"
+  fs.closeSync jsFile
 
 # Helper for updating deps.js file after changes
 updateDeps = ->
