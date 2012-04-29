@@ -4,8 +4,9 @@ path   = require 'path'
 
 # Make sure we have our dependencies
 try
-  colors = require 'colors'
-  wrench = require 'wrench'
+  colors     = require 'colors'
+  wrench     = require 'wrench'
+  coffeelint = require 'coffeelint'
 catch error
   console.error 'Please run `npm install` first'
   process.exit 1
@@ -51,6 +52,33 @@ closureCompilerFlags = [
   "--define='goog.DEBUG=false'"
   "--define='myproject.DEBUG=false'"
 ].map (flag) -> "--compiler_flags=\"#{flag}\""
+
+coffeeLintConfig =
+  no_tabs:
+    level: 'error'
+  no_trailing_whitespace:
+    level: 'error'
+  max_line_length:
+    value: 80
+    level: 'error'
+  camel_case_classes:
+    level: 'error'
+  indentation:
+    value: 2
+    level: 'error'
+  no_implicit_braces:
+    level: 'ignore'
+  no_trailing_semicolons:
+    level: 'error'
+  no_plusplus:
+    level: 'ignore'
+  no_throwing_strings:
+    level: 'error'
+  no_backticks:
+    level: 'warn'
+  line_endings:
+    value: 'unix'
+    level: 'warn'
 
 task 'build', 'Compiles and minifies JavaScript file for production use', ->
   console.log "Compiling CoffeeScript".yellow
@@ -124,6 +152,37 @@ task 'watch', 'Automatically recompile CoffeeScript files to JavaScript', ->
       process.stdout.write data.green
     else
       process.stderr.write data.red
+
+task 'lint', 'Check CoffeeScript for lint', ->
+  console.log "Checking *.coffee for lint".yellow
+  pass = "✔".green
+  warn = "⚠".yellow
+  fail = "✖".red
+  getSourceFilePaths().forEach (filepath) ->
+    fs.readFile filepath, (err, data) ->
+      shortPath = filepath.substr paths.srcDir.length + 1
+      result = coffeelint.lint data.toString(), coffeeLintConfig
+      if result.length
+        hasError = result.some (res) -> res.level is 'error'
+        level = if hasError then fail else warn
+        console.error "#{level}  #{shortPath}".red
+        for res in result
+          level = if res.level is 'error' then fail else warn
+          console.error "   #{level}  Line #{res.lineNumber}: #{res.message}"
+      else
+        console.log "#{pass}  #{shortPath}".green
+
+# Helper for finding all source files
+getSourceFilePaths = (dirPath = paths.srcDir) ->
+  files = []
+  for file in fs.readdirSync dirPath
+    filepath = path.join dirPath, file
+    stats = fs.lstatSync filepath
+    if stats.isDirectory()
+      files = files.concat getSourceFilePaths filepath
+    else if /\.coffee$/.test file
+      files.push filepath
+  files
 
 task 'server', 'Start a web server in the root directory', ->
   console.log "Starting web server at http://localhost:8000"

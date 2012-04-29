@@ -8,6 +8,7 @@ Project template for client-side JavaScript projects written in CoffeeScript and
 * Compile scripts using Closure's Advanced Compilation mode
 * Write tests using [QUnit](http://docs.jquery.com/QUnit)
 * Headless testing via [PhantomJS](http://phantomjs.org/)
+* Check lint with [Coffee Lint](http://www.coffeelint.org/)
 * Run local webserver for development
 
 ## Pre-requisites
@@ -37,11 +38,11 @@ Project template for client-side JavaScript projects written in CoffeeScript and
 * `cake server`: Run local webserver for testing (requires Python)
 * `cake clean`: Remove temporary and generated files
 * `cake size`: Report file size information for any scripts within `build/`
+* `cake lint`: Check lint with [Coffee Lint](http://www.coffeelint.org/)
 
 ## Future Ideas
 
 * Generate documentation (via [CODO](http://netzpirat.github.com/codo/) or similar)
-* Check lint with [Coffee Lint](http://www.coffeelint.org/)
 
 ## Contributors
 

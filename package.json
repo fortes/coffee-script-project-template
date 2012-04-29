@@ -6,6 +6,7 @@
   "dependencies": {},
   "devDependencies": {
     "coffee-script": "*",
+    "coffeelint": "*",
     "colors": "*",
     "wrench": "*"
   }
