@@ -17,9 +17,11 @@ page.open "test/index.html", (status) ->
     # Helper for sending JSON out to phantom
     phantomLog = (name, result) ->
       console.log "PHANTOM: #{window.JSON.stringify { name, result }}"
+      return
 
     window.addEventListener 'error', (error) ->
       phantomLog 'error', { error }
+      return
 
     # Hook into QUnit events
     ['log', 'testStart', 'testDone', 'moduleStart', 'moduleDone', 'begin', 'done'].forEach (ev) ->
