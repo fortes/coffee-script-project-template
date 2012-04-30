@@ -216,6 +216,9 @@ task 'test:phantom', 'Run tests via phantomJS', ->
       try
         obj = JSON.parse(line.substr 9)
         switch obj.name
+          when 'error'
+            console.error "{#fail}  JavaScript Error: #{obj.result.error}".red
+
           when 'log'
             continue if obj.result.result
             if 'expected' of obj.result
