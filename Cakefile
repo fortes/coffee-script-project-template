@@ -202,8 +202,12 @@ task 'test:phantom', 'Run tests via phantomJS', ->
   p = exec "phantomjs #{paths.testLibDir}/phantom-driver.coffee --web-security=no"
   p.stderr.on 'data', stdErrorStreamer (data) -> data.red
   # The phantom driver outputs JSON
+  bufferedOutput = ''
   p.stdout.on 'data', (data) ->
-    unless /^PHANTOM/.test data
+    bufferedOutput += data
+    return unless bufferedOutput[bufferedOutput.length - 1] is "\n"
+
+    unless /^PHANTOM/.test bufferedOutput
       process.stdout.write data.grey
       return
 
@@ -211,7 +215,7 @@ task 'test:phantom', 'Run tests via phantomJS', ->
     fail = "✖".red
 
     # Split lines
-    for line in (data.split '\n')
+    for line in (bufferedOutput.split '\n')
       continue unless line
       try
         obj = JSON.parse(line.substr 9)
@@ -242,6 +246,8 @@ task 'test:phantom', 'Run tests via phantomJS', ->
               console.log "#{pass}  #{obj.result.total} tests passed"
       catch ex
         console.error "JSON parsing fail: #{line}".red
+
+    bufferedOutput = ''
 
   p.on 'exit', (code) ->
     process.exit code
