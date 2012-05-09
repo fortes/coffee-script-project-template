@@ -50,7 +50,7 @@ closureCompilerFlags = [
   "--summary_detail_level=3"
   # Add any custom variable definitions below, using same format
   "--define='goog.DEBUG=false'"
-  "--define='myproject.DEBUG=false'"
+  "--define='#{packageInfo.name}.DEBUG=false'"
 ].map (flag) -> "--compiler_flags=\"#{flag}\""
 
 coffeeLintConfig =
