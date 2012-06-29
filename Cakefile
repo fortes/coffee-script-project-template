@@ -25,7 +25,7 @@ paths.testLibDir = paths.testDir + '/lib'
 
 # Create directories if they do not already exist
 for dir in [paths.buildDir, paths.tmpDir, paths.externsDir]
-  fs.mkdirSync dir, '0755' if not path.existsSync dir
+  fs.mkdirSync dir, '0755' if not fs.existsSync dir
 
 # Read in package.json
 packageInfo = JSON.parse fs.readFileSync path.join __dirname, 'package.json'
@@ -95,7 +95,7 @@ task 'build', 'Compiles and minifies JavaScript file for production use', ->
     # Compile
     console.log "Compiling with Closure Compiler".yellow
     # Add custom externs to compiler flags
-    if path.existsSync paths.externsDir
+    if fs.existsSync paths.externsDir
       (fs.readdirSync paths.externsDir).forEach (f) ->
         closureCompilerFlags.push("--compiler_flags=\"--externs=#{path.join paths.externsDir, f}\"")
 
@@ -256,7 +256,7 @@ task 'test:phantom', 'Run tests via phantomJS', ->
 
 task 'clean', 'Remove temporary and generated files', ->
   # Delete generated deps.js file
-  if path.existsSync paths.depsJs
+  if fs.existsSync paths.depsJs
     fs.unlinkSync paths.depsJs
     console.log "Deleted #{paths.depsJs}".magenta
 
@@ -281,12 +281,12 @@ task 'clean', 'Remove temporary and generated files', ->
 
   # Remove build/ and .tmp/
   for dir in [paths.tmpDir, paths.buildDir]
-    continue if not path.existsSync dir
+    continue if not fs.existsSync dir
     wrench.rmdirSyncRecursive dir
     console.log "Removed #{dir}".magenta
 
 task 'size', 'Report file size', ->
-  return if not path.existsSync paths.buildDir
+  return if not fs.existsSync paths.buildDir
   for file in fs.readdirSync paths.buildDir
     # Skip non-JS files
     if /\.js$/.test file
