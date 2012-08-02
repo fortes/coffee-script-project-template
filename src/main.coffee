@@ -6,17 +6,21 @@ main.coffee - Primary entry point
 goog.provide "myproject"
 
 # Include other files
+goog.require "debug"
 goog.require "myproject.helpers"
 
-# Constants that can be overriden at compile time
-###* @define {boolean} ###
-myproject.DEBUG = true
+# Constant that can be overriden at compile time (edit Cakefile)
+
 ###* @define {number} ###
 myproject.SAMPLE_VALUE = 100
 
 # This code gets completely stripped out when compiled and minified
-if myproject.DEBUG
-  window.console.info 'Running in DEBUG'
+if DEBUG
+  window.myDebugValue = "Hello World"
+
+# Console aliased to debug object, which is then stripped for production (see
+# `debug.js`)
+debug.info 'Running in DEBUG'
 
 # Closure Compiler renames functions, if you want to expose a function for
 # others to use, use goog.exportSymbol
