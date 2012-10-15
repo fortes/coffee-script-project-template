@@ -48,6 +48,7 @@ closureCompilerFlags = [
   "--jscomp_warning=unknownDefines"
   "--warning_level=VERBOSE"
   "--summary_detail_level=3"
+  "--source_map_format=V3"
   # Add any custom variable definitions below, using same format
   "--define='goog.DEBUG=false'"
   "--define='DEBUG=false'"
@@ -104,6 +105,7 @@ task 'build', 'Compiles and minifies JavaScript file for production use', ->
             --root #{paths.libDir} --input #{path.join paths.libDir, 'main.js'}
             --output_mode=compiled
             --compiler_jar=#{path.join paths.closureDir, 'compiler/compiler.jar'}
+            --compiler_flags=\"--create_source_map=#{outputPath}.map\"
             #{closureCompilerFlags.join ' '} --output_file=#{outputPath}"
     p.stderr.on 'data', stdErrorStreamer (line) ->
       str = line
