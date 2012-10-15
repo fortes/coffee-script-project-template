@@ -10,6 +10,7 @@ Project template for client-side JavaScript projects written in CoffeeScript and
 * Headless testing via [PhantomJS](http://phantomjs.org/)
 * Check lint with [Coffee Lint](http://www.coffeelint.org/)
 * Run local webserver for development
+* Generate [Source Map](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/) for the final compiled output
 
 ## Pre-requisites
 
@@ -24,7 +25,7 @@ Project template for client-side JavaScript projects written in CoffeeScript and
 2. Clone locally
 3. Edit `package.json`
 4. Run `npm install` to install local dependencies
-5.  Run `git submodule update --init` to load QUnit
+5. Run `git submodule update --init` to load QUnit
 6. Run `cake watch` to automatically compile CoffeeScript to JavaScript
 7. Start coding
 8. Test using `cake test:phantom`
@@ -43,6 +44,9 @@ Project template for client-side JavaScript projects written in CoffeeScript and
 ## Future Ideas
 
 * Generate documentation (via [CODO](http://netzpirat.github.com/codo/) or similar)
+* Support [UglifyJS](https://github.com/mishoo/UglifyJS) as well as Closure Compiler
+* Output source maps for CoffeeScript, once the CoffeeScript compilers supports it
+* Use [CommonJS/AMD-style](http://www.nonblocking.io/2011/12/experimental-support-for-common-js-and.html) support from Closure Compiler to do something awesome
 
 ## Contributors
 
