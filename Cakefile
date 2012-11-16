@@ -21,6 +21,7 @@ paths.externsDir = path.join paths.libDir, 'externs'
 paths.calcdeps = path.join paths.closureDir, 'library/bin/calcdeps.py'
 paths.closureBuilder = path.join paths.closureDir, 'library/bin/build/closurebuilder.py'
 paths.depsJs = path.join paths.closureDir, 'library/deps.js'
+paths.requireJs = path.join paths.libDir, 'require.js'
 paths.testLibDir = paths.testDir + '/lib'
 
 # Create directories if they do not already exist
@@ -30,6 +31,12 @@ for dir in [paths.buildDir, paths.tmpDir, paths.externsDir]
 # Read in package.json
 packageInfo = JSON.parse fs.readFileSync path.join __dirname, 'package.json'
 
+firstPassClosureFlags = [
+  "--transform_amd_modules"
+  "--process_common_js_modules"
+  "--warning_level=VERBOSE"
+  "--compilation_level=WHITESPACE_ONLY"
+]
 closureCompilerFlags = [
   "--compilation_level=ADVANCED_OPTIMIZATIONS"
   "--language_in=ECMASCRIPT5_STRICT"
@@ -46,13 +53,12 @@ closureCompilerFlags = [
   "--jscomp_warning=nonStandardJsDocs"
   "--jscomp_warning=strictModuleDepCheck"
   "--jscomp_warning=unknownDefines"
-  "--warning_level=VERBOSE"
   "--summary_detail_level=3"
-  "--source_map_format=V3"
+  #"--source_map_format=V3"
   # Add any custom variable definitions below, using same format
-  "--define='goog.DEBUG=false'"
-  "--define='DEBUG=false'"
-].map (flag) -> "--compiler_flags=\"#{flag}\""
+  #"--define='goog.DEBUG=false'"
+  #"--define='DEBUG=false'"
+]
 
 coffeeLintConfig =
   no_tabs:
@@ -81,6 +87,19 @@ coffeeLintConfig =
     value: 'unix'
     level: 'warn'
 
+getAllJsFiles = ->
+  toCheck = [paths.libDir]
+  files = []
+  while filepath = toCheck.pop()
+    continue if filepath is paths.closureDir
+    if fs.lstatSync(filepath).isDirectory()
+      for file in fs.readdirSync(filepath)
+        continue if file is 'closure'
+        toCheck.push path.join filepath, file
+    else
+      files.push filepath
+  files
+
 task 'build', 'Compiles and minifies JavaScript file for production use', ->
   console.log "Compiling CoffeeScript".yellow
   # Compile test scripts for consistency
@@ -101,12 +120,11 @@ task 'build', 'Compiles and minifies JavaScript file for production use', ->
         closureCompilerFlags.push("--compiler_flags=\"--externs=#{path.join paths.externsDir, f}\"")
 
     outputPath = path.join paths.buildDir, "#{packageInfo.name}-#{packageInfo.version}.js"
-    p = exec "#{paths.closureBuilder}
-            --root #{paths.libDir} --input #{path.join paths.libDir, 'main.js'}
-            --output_mode=compiled
-            --compiler_jar=#{path.join paths.closureDir, 'compiler/compiler.jar'}
-            --compiler_flags=\"--create_source_map=#{outputPath}.map\"
-            #{closureCompilerFlags.join ' '} --output_file=#{outputPath}"
+    p = exec "java -jar #{path.join paths.closureDir, 'compiler/compiler.jar'}
+            --common_js_entry_module #{path.join paths.libDir, 'main.js'}
+            --create_source_map=#{outputPath}.map
+            #{firstPassClosureFlags.join ' '} --js_output_file=#{outputPath}.tmp
+            --js #{ getAllJsFiles().join ' --js '}"
     p.stderr.on 'data', stdErrorStreamer (line) ->
       str = line
       # Strip out command name from messages
@@ -265,7 +283,7 @@ task 'clean', 'Remove temporary and generated files', ->
   for file in fs.readdirSync paths.libDir
     filepath = path.join paths.libDir, file
     # Skip special directories
-    continue if filepath in [paths.externsDir, paths.closureDir]
+    continue if filepath in [paths.externsDir, paths.closureDir, paths.requireJs]
     stats = fs.lstatSync filepath
     if stats.isDirectory()
       wrench.rmdirSyncRecursive filepath

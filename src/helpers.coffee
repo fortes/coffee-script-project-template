@@ -1,6 +1,4 @@
-goog.provide "myproject.helpers"
-
-myproject.helpers =
+define ->
   ###*
   Adds two numbers and returns the result
   @param {number} a

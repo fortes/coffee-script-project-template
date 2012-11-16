@@ -6,23 +6,10 @@
     <script src="lib/qunit/qunit/qunit.js"></script>
     <link rel="stylesheet" href="lib/qunit/qunit/qunit.css">
     <!-- Module loaders & bootstrap -->
-    <script src="../lib/closure/library/base.js"></script>
-    <!-- Load via goog.require to get scripts in correct dependency order-->
-    <script>
-      try {
-        goog.require("myproject");
-      }
-      catch (ex) {
-        if (/^goog.require/.test(ex.message)) {
-          console.error('Run `cake watch` in order to generate dependencies');
-        }
-
-        throw ex;
-      }
-    </script>
+    <script data-main="../lib/main" src="../lib/require.js"></script>
     <!-- Test scripts get loaded here, point to .js not .coffee -->
-    <script src="lib/main.js"></script>
-    <script src="lib/helpers.js"></script>
+    <!--<script src="lib/main.js"></script>-->
+    <!--<script src="lib/helpers.js"></script>-->
   </head>
 
   <body>

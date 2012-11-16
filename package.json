@@ -8,6 +8,7 @@
     "coffee-script": "*",
     "coffeelint": "*",
     "colors": "*",
-    "wrench": "*"
+    "wrench": "*",
+    "requirejs": "*"
   }
 }
