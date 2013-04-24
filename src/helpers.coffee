@@ -1,4 +1,4 @@
-define ->
+module.exports =
   ###*
   Adds two numbers and returns the result
   @param {number} a

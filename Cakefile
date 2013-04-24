@@ -32,7 +32,7 @@ for dir in [paths.buildDir, paths.tmpDir, paths.externsDir]
 packageInfo = JSON.parse fs.readFileSync path.join __dirname, 'package.json'
 
 firstPassClosureFlags = [
-  "--transform_amd_modules"
+  #"--transform_amd_modules"
   "--process_common_js_modules"
   "--warning_level=VERBOSE"
   "--compilation_level=WHITESPACE_ONLY"
@@ -97,6 +97,7 @@ getAllJsFiles = ->
         continue if file is 'closure'
         toCheck.push path.join filepath, file
     else
+      continue unless path.extname(filepath) is '.js'
       files.push filepath
   files
 
