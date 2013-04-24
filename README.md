@@ -11,6 +11,7 @@ Project template for client-side JavaScript projects written in CoffeeScript and
 * Check lint with [Coffee Lint](http://www.coffeelint.org/)
 * Run local webserver for development
 * Generate [Source Map](http://www.html5rocks.com/en/tutorials/developertools/sourcemaps/) for the final compiled output
+* Outputs Source Map for compiled CoffeeScript for debugging while testing
 
 ## Pre-requisites
 
@@ -45,7 +46,6 @@ Project template for client-side JavaScript projects written in CoffeeScript and
 
 * Generate documentation (via [CODO](http://netzpirat.github.com/codo/) or similar)
 * Support [UglifyJS](https://github.com/mishoo/UglifyJS) as well as Closure Compiler
-* Output source maps for CoffeeScript, once the CoffeeScript compilers supports it
 * Use [CommonJS/AMD-style](http://www.nonblocking.io/2011/12/experimental-support-for-common-js-and.html) support from Closure Compiler to do something awesome
 
 ## Contributors
