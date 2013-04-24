@@ -103,8 +103,8 @@ getAllJsFiles = ->
 task 'build', 'Compiles and minifies JavaScript file for production use', ->
   console.log "Compiling CoffeeScript".yellow
   # Compile test scripts for consistency
-  exec "coffee --compile --bare --output #{paths.testLibDir} #{paths.testDir}"
-  exec "coffee --compile --bare --output #{paths.libDir} #{paths.srcDir}", (e, o, se) ->
+  exec "coffee --map --compile --bare --output #{paths.testLibDir} #{paths.testDir}"
+  exec "coffee --map --compile --bare --output #{paths.libDir} #{paths.srcDir}", (e, o, se) ->
     if e
       console.error "Error encountered while compiling CoffeeScript".red
       console.error se
@@ -150,7 +150,7 @@ task 'build', 'Compiles and minifies JavaScript file for production use', ->
 
 task 'watch', 'Automatically recompile CoffeeScript files to JavaScript', ->
   console.log "Watching coffee files for changes, press Control-C to quit".yellow
-  srcWatcher  = exec "coffee --compile --bare --watch --output #{paths.libDir} #{paths.srcDir}"
+  srcWatcher  = exec "coffee --compile --bare --watch --map --output #{paths.libDir} #{paths.srcDir}"
   srcWatcher.stderr.on 'data', (data) -> console.error stripEndline(data).red
   srcWatcher.stdout.on 'data', (data) ->
     # Hacky way to find if something compiled successfully

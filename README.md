@@ -44,8 +44,9 @@ Project template for client-side JavaScript projects written in CoffeeScript and
 ## Future Ideas
 
 * Generate documentation (via [CODO](http://netzpirat.github.com/codo/) or similar)
+* Support [UglifyJS](https://github.com/mishoo/UglifyJS) as well as Closure Compiler
 * Output source maps for CoffeeScript, once the CoffeeScript compilers supports it
-* Support AMD-style
+* Use [CommonJS/AMD-style](http://www.nonblocking.io/2011/12/experimental-support-for-common-js-and.html) support from Closure Compiler to do something awesome
 
 ## Contributors
 
