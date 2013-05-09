@@ -9,6 +9,7 @@
     "coffeelint": "*",
     "colors": "*",
     "wrench": "*",
-    "requirejs": "*"
+    "requirejs": "*",
+    "glob": "~3"
   }
 }

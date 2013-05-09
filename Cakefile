@@ -1,15 +1,21 @@
 fs     = require 'fs'
-path   = require 'path'
-{exec} = require 'child_process'
 
-# Make sure we have our dependencies
 try
-  colors     = require 'colors'
-  wrench     = require 'wrench'
-  coffeelint = require 'coffeelint'
+  # Make sure required modules have been installed
+  pkg = JSON.parse fs.readFileSync('package.json').toString()
+  for dependency of pkg['dependencies']
+    require dependency
 catch error
-  console.error 'Please run `npm install` first'
-  process.exit 1
+  console.error error.message
+  console.error 'Run `npm install` to install depdencies'
+  process.exit -1
+
+path = require 'path'
+{exec} = require 'child_process'
+colors = require 'colors'
+wrench = require 'wrench'
+glob = require 'glob'
+coffeelint = require 'coffeelint'
 
 # Setup directory paths
 paths =
@@ -54,10 +60,10 @@ closureCompilerFlags = [
   "--jscomp_warning=strictModuleDepCheck"
   "--jscomp_warning=unknownDefines"
   "--summary_detail_level=3"
-  #"--source_map_format=V3"
+  "--source_map_format=V3"
   # Add any custom variable definitions below, using same format
-  #"--define='goog.DEBUG=false'"
-  #"--define='DEBUG=false'"
+  "--define='goog.DEBUG=false'"
+  "--define='DEBUG=false'"
 ]
 
 coffeeLintConfig =
