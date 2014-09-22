@@ -1,7 +1,7 @@
 {
-  "name": "myproject",
-  "description": "Project template for CoffeeScript projects",
-  "author": "Filipe Fortes <filipe@fortes.com>",
+  "name": "disco-den-lighting",
+  "description": "Lighting for the Den",
+  "author": "Andrew Gall <housepage@gmail.com",
   "version": "0.0.1",
   "dependencies": {},
   "devDependencies": {

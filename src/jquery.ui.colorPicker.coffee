@@ -1,0 +1,1 @@
+../submodules/jquery-ui-colorpicker/jquery.ui.colorPicker.coffee

@@ -1,0 +1,296 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <style>
+      body {
+        margin: 0px;
+        padding: 0px;
+      }
+    </style>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.js" type="text/javascript"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.js" type="text/javascript"></script>
+    <script type="text/javascript" src="js/dmx-web/lib/kinetic-v5.1.0.js"></script>
+    <script type="text/javascript" src="js/dmx-web/lib/eventemitter2.js"></script>
+    <script type="text/javascript" src="js/dmx-web/lib/tinycolor.js"></script>
+    <script type="text/javascript" src="js/dmx-web/lib/SortedList.js"></script>
+    <script type="text/javascript" src="js/dmx-web/lib/IntervalTree.js"></script>
+    <script type="text/javascript" src="js/dmx-web/lib/roslib.js"></script>
+    <script type="text/javascript" src="js/dmx-web/message_factory.js"></script>
+    <script type="text/javascript">
+      window.target_host = "192.168.5.118";
+    </script>
+    <script type="text/javascript" src="js/dmx-web/dmx.js"></script>
+    <script type="text/javascript" src="js/dmx-web/ui.js"></script>
+    <script type="text/javascript" src="js/dmx-web/ui-tilegrid.js"></script>
+    <script type="text/javascript" src="js/dmx-web/ui-inputbar.js"></script>
+    <script type="text/javascript" src="js/dmx-web/ui-polarinput.js"></script>
+    <script type="text/javascript" src="js/dmx-web/ui-dmxmovercontrol.js"></script>
+    <script type="text/javascript" src="js/dmx-web/ui-stage.js"></script>
+
+    <script type="text/javascript" src="js/disco-den-lighting/jquery.ui.colorPicker.js"></script>
+
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet'>
+    <link href="/css/jquery.ui.colorPicker.css" rel="stylesheet" type="text/css">
+    <style type="text/css" media="screen">
+      html {
+        background-image: url('images/transparent.gif');
+        font-family: 'PT Sans', Arial, sans-serif;
+        font-size: 15px;
+        color: #252525;
+      }
+      body {
+        margin: 0;
+        height: 100%;
+      }
+      #page {
+        width: 300px;
+        padding: 30px;
+        margin: 0 auto;
+        background-color: #fafafa;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        overflow: hidden;
+        border-radius: 0 0 3px 3px;
+      }
+      #picker {
+        float: right;
+        padding: 15px;
+        background-color: #f5f5f5;
+        border: 5px solid #eee;
+        border-radius: 3px;
+        margin-left: 30px;
+      }
+      h1, h2, h3, h4, h5, h6 {
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        color: #2b6ae1;
+        text-decoration: none;
+      }
+      a:hover {
+        color: #79aff2;
+        text-decoration: underline;
+      }
+      pre {
+        color: #871f05;
+      }
+    </style>
+  </head>
+
+
+  <body style="overflow: hidden" bgcolor='black'>
+  <div id="page">
+    <div id="picker">
+      <input type="text" id="colorpicker">
+    </div>
+  </div>
+
+    <script>
+      $( document ).ready(function() {
+        document.body.addEventListener('touchmove', function(event) {
+          event.preventDefault();
+        }, false);
+      });
+    </script>
+
+<script>
+/*var dev;
+var f1;
+var f2;
+var f3;
+var view;
+var dmxClient;
+var ros;
+
+$( document ).ready(function(){
+  ros=new ROSLIB.Ros({url : 'ws://192.168.5.118:4000'});
+  ros.on('connection', function(){
+    console.log('ros socket ready');
+
+    Dmx.factory = new ROSUtils.MessageFactory(ros);
+    Dmx.factory.getMessageDetails('lighting_msgs/DmxCommand',
+      function(type){
+        console.log("type: " + type + " ready");
+        Dmx.emitter.emit('ready');
+        init();
+      }
+    );
+
+
+    //init();
+  });
+})
+
+var init = function() {
+
+  //Dmx.emitter.on('change.Device.*', function(value){
+  //  console.log(this.event);
+  //  console.log(value);
+  //});
+
+  dmxClient = new Dmx.CommandClient(ros);
+
+  dev = new Dmx.Device({name:'mover-01', address: "1.496"});
+  dmxClient.add(dev);
+
+  f = new Dmx.Field();
+  f.name = 'mode';
+  f.offset = 0;
+  dev.template.addField(f);
+  dev.set('mode', 255);
+
+  f = new Dmx.Field();
+  f.name = 'intensity';
+  f.offset = 1;
+  dev.template.addField(f);
+
+  f = new Dmx.Field();
+  f.name = 'pan';
+  f.offset = 2;
+  f.setBytes(2);
+  dev.template.addField(f);
+  //dev.set('pan', f.computeValue(0));
+
+  f = new Dmx.Field();
+  f.name = 'tilt';
+  f.offset = 4;
+  f.setBytes(2);
+  dev.template.addField(f);
+  //dev.set('tilt', f.computeValue(0));
+
+  f = new Dmx.Field();
+  f.name = 'zoom';
+  f.offset = 13;
+  dev.template.addField(f);
+
+  f = new Dmx.Field();
+  f.name = 'wheel';
+  f.offset = 7;
+  dev.template.addField(f);
+
+  f = new Dmx.Field();
+  f.name = 'red';
+  f.offset = 8;
+  dev.template.addField(f);
+
+  f = new Dmx.Field();
+  f.name = 'green';
+  f.offset = 9;
+  dev.template.addField(f);
+
+  f = new Dmx.Field();
+  f.name = 'blue';
+  f.offset = 10;
+  dev.template.addField(f);
+
+  f = new Dmx.Field();
+  f.name = 'white';
+  f.offset = 11;
+  dev.template.addField(f);
+
+  pixels = new Dmx.Device({name:'pixels-01', address: "1.0"});
+  dmxClient.add(pixels);
+
+  f = new Dmx.Field();
+  f.name = 'pixels';
+  f.offset = 0;
+  f.length = 60;
+  f.setBytes(3);
+  pixels.template.addField(f);
+  pixels.set('pixels', [0,0,0]);
+
+  Ui.emitter.on('select.TileGrid.pixels',
+    function(evt){
+      var v = 255* (evt.x + (evt.y * 32)) / (32*16);
+
+      pixels.set('pixels', [v,v,v]);
+      dmxClient.setDevice(pixels);
+      dmxClient.send();
+    }
+  );
+
+  var stages = $(".stage");
+
+  for(var i=0; i<stages.length; i++){
+    var options = {
+      container: stages[i],
+      width: $( window ).width(),
+      height: $( window ).height(),
+      x: 0,
+      y: 0,
+      offsetX: 0,
+      offsetY: 0,
+      scaleX: 1,
+      scaleY: 1
+    };
+
+    contain = options.container;
+    console.log(options.container);
+    view = new Ui.StageView( options );
+
+    options.container=undefined;
+    options.x=10;
+    options.y=10;
+    options.name = 'mover-1';
+    options.width = view.stage.width();
+    options.height = view.stage.height();
+    options.tileSize = { x: 20, y :20 }
+    options.tileCount = { x: 32, y: 16 };
+    options.margins = {inner: {x:1, y:1}, outer: {x:10, y:5}};
+    options.defaultTileOpt = {
+      fill: 'grey'
+    };
+
+    titleLayer = new Kinetic.Layer(options);
+    titleText = new Kinetic.Text({
+      x: options.x,
+      y: options.y,
+      text: "DMX Probe",
+      fontSize: 30,
+      fontFamily: 'monospace',
+      fill: '#B2E9E2'
+    });
+
+    options.y += 35;
+
+    lineBreak = new Kinetic.Line({
+      points: [ options.x, options.y,
+                options.width - 20, options.y
+              ],
+      stroke: '#B2E9E2',
+      strokeWidth: 1,
+      dash: [5, 5]
+    });
+
+    options.y += 15;
+
+    moverMargins = {inner: {x: 0, y: 10}, outer: {x:10, y:5}};
+    var c = JSON.parse(JSON.stringify({name: options.name, x: options.x, y: options.y, margins: moverMargins, width: 200, height:300}));
+    c.device = dev;
+    view.mover1 = new Ui.DmxMoverControl(view.stage, c);
+
+    options.x += view.mover1.layer.width();
+    options.name = 'pixels';
+    view.grid1 = new Ui.TileGrid(view.stage, JSON.parse(JSON.stringify(options)));
+
+
+    titleLayer.add(titleText);
+    titleLayer.add(lineBreak);
+    view.stage.add(titleLayer);
+    view.stage.add(view.grid1.layer);
+    view.stage.add(view.mover1.layer);
+
+    $( window ).resize(function() {
+      view.stage.width( $( window ).width() );
+      view.stage.height( $( window ).height() );
+    });
+    //views.push(view);
+  }
+}*/
+</script>
+    <script type="text/javascript" src="js/disco-den-lighting/picker-config.js"></script>
+  </body>
+</html>

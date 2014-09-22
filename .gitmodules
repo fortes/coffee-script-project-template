@@ -1,3 +1,9 @@
 [submodule "test/lib/qunit"]
 	path = test/lib/qunit
 	url = https://github.com/jquery/qunit
+[submodule "submodules/jquery-ui-colorpicker"]
+	path = submodules/jquery-ui-colorpicker
+	url = git@bitbucket.org:lindekleiv/jquery-ui-colorpicker.git
+[submodule "submodules/dmx-web"]
+	path = submodules/dmx-web
+	url = git@github.com:housepage/dmx-web.git
